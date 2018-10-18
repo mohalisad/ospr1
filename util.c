@@ -128,12 +128,21 @@ int strlen_to_char(string main,char to){
     return i;
 }
 
+int intstrlen(int input){
+    int len;
+    string temp = new_empty_string(100);
+    int2str(input,temp);
+    len = strlen_(temp);
+    free(temp);
+    return len;
+}
+
 string stradd(string first,string second){
     int len1,len2;
     string ret;
     int i=0;
-    len1=strlen_to_char(first,'\0');
-    len2=strlen_to_char(first,'\0');
+    len1=strlen_(first);
+    len2=strlen_(second);
     ret = new_empty_string(len1+len2);
     for(i=0;i<len1;i++)
         ret[i]=first[i];
@@ -167,6 +176,13 @@ void printint(int fd,int num){
 void printstr(int fd,string inp){
     write(fd,inp,strlen_(inp)+1);
 }
+
 void println(int fd){
     write(fd,"\n",2);
+}
+
+void printspaces(int fd,int count){
+    int i;
+    for(i=0;i<count;i++)
+        write(fd," ",2);
 }

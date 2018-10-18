@@ -23,10 +23,12 @@ int    number_of_tokens(string main,char spiliter);
 string get_token(string main,char spiliter,int part_number);
 int    strlen_(string main);
 int    strlen_to_char(string main,char to);
+int    intstrlen(int input);
 string stradd(string first,string second);
 string readstr(int fd,int size);
 int    readint(int fd);
 void   printint(int fd,int num);
 void   printstr(int fd,string inp);
 void   println (int fd);
+void   printspaces(int fd,int count);
 #endif //UTIL_H
