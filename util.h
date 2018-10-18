@@ -1,3 +1,5 @@
+#ifndef UTIL_H
+#define UTIL_H
 #define TRUE  1
 #define FALSE 0
 
@@ -22,8 +24,9 @@ string get_token(string main,char spiliter,int part_number);
 int    strlen_(string main);
 int    strlen_to_char(string main,char to);
 string stradd(string first,string second);
-string readstr(int fd);
+string readstr(int fd,int size);
 int    readint(int fd);
 void   printint(int fd,int num);
 void   printstr(int fd,string inp);
 void   println (int fd);
+#endif //UTIL_H

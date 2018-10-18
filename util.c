@@ -62,7 +62,6 @@ string new_string(string input){
 }
 
 string new_empty_string(int length){
-    int i;
     string ret = (string)malloc(length+1 * sizeof(char));
     ret[length] = '\0';
     return ret;
@@ -144,17 +143,15 @@ string stradd(string first,string second){
     return ret;
 }
 
-string readstr(int fd){
-    string buf = new_empty_string(250);
-    read(fd,buf,250);
-    buf[strlen_to_char(buf,'\n')] = '\0';
+string readstr(int fd,int size){
+    string buf = new_empty_string(size);
+    read(fd,buf,size);
     return buf;
 }
 
 int readint(int fd){
     int i;
-    string buf = new_empty_string(250);
-    read(fd,buf,250);
+    string buf = readstr(fd,20);
     i = str2int(buf);
     free(buf);
     return i;
