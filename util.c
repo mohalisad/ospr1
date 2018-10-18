@@ -98,7 +98,7 @@ int number_of_tokens(string main,char spiliter){
 
 string get_token(string main,char spiliter,int part_number){
     string ret;
-    int counter=1,length=0;
+    int counter=-1,length=0;
     int i,j;
     for(i=0;;i++){
         if(main[i]=='\0')break;
@@ -144,7 +144,7 @@ string stradd(string first,string second){
     return ret;
 }
 
-string readline(int fd){
+string readstr(int fd){
     string buf = new_empty_string(250);
     read(fd,buf,250);
     buf[strlen_to_char(buf,'\n')] = '\0';
@@ -163,10 +163,13 @@ int readint(int fd){
 void printint(int fd,int num){
     string buf = new_empty_string(250);
     int2str(num,buf);
-    write(fd,buf,strlen_(buf));
+    write(fd,buf,strlen_(buf)+1);
     free(buf);
 }
 
 void printstr(int fd,string inp){
-    write(fd,inp,strlen_(inp));
+    write(fd,inp,strlen_(inp)+1);
+}
+void println(int fd){
+    write(fd,"\n",2);
 }
