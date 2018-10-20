@@ -139,8 +139,8 @@ int intstrlen(int input){
 
 string stradd(string first,string second){
     int len1,len2;
+    int i;
     string ret;
-    int i=0;
     len1=strlen_(first);
     len2=strlen_(second);
     ret = new_empty_string(len1+len2);
@@ -151,6 +151,15 @@ string stradd(string first,string second){
     ret [len1+len2]='\0';
     return ret;
 }
+
+void strcopy(string from,string to){
+    int i;
+    for(i=0;;i++){
+        to[i] = from[i];
+        if(to[i])break;
+    }
+}
+
 
 string readstr(int fd,int size){
     string buf = new_empty_string(size);

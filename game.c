@@ -71,6 +71,7 @@ void hit_enemyboard(GameStat *game,int x,int y,bool success){
         game->myhit++;
 }
 
+/*
 int main(void){
     int file;
     GameStat *game;
@@ -84,3 +85,4 @@ int main(void){
     hit_enemyboard(game,6,6,0);
     print_game(STDOUT,game);
 }
+*/

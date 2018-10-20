@@ -25,6 +25,7 @@ int    strlen_(string main);
 int    strlen_to_char(string main,char to);
 int    intstrlen(int input);
 string stradd(string first,string second);
+void   strcopy(string from,string to);
 string readstr(int fd,int size);
 int    readint(int fd);
 void   printint(int fd,int num);
