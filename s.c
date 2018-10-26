@@ -7,11 +7,11 @@ int main(int argc, char *argv[]){
    string buf;
    string line;
    UDPInfo* server;
-   UDPInfo client;
+   UDPInfo* client;
    server = init_listen_UDP(MPORT);
-   client = init_broadcast_udp(MPORT)
+   client = init_broadcast_udp(MPORT);
    while (TRUE){
-       send_UDP(server,&client,"Hello World\n");
+       send_UDP(server,client,"Hello World\n");
        //buf = receive_UDP(server,&client,1024);
        //printstr(STDOUT,buf);
        //println(STDOUT);
