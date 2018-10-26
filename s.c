@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <time.h>
 #include "util.h"
 
 #define MPORT 5200
@@ -12,6 +13,7 @@ int main(){
     int count;
     int sockfd;
     int addrsize;
+    int t;
     struct sockaddr_in addrport,addrto;
     if ((sockfd = socket(PF_INET,SOCK_STREAM,0)) == -1){
         printstr(STDOUT,"socket failed\n");
@@ -32,9 +34,15 @@ int main(){
         s = accept(sockfd,&clientaddr,&clientaddrsize);
         */
         addrto.sin_family = AF_INET;
-        addrto.sin_port = htons(MPORT);
+        addrto.sin_port = htons(NPORT);
         inet_pton(AF_INET, "255.255.255.255", &(addrto.sin_addr));
-        sendto(sockfd,"Hello",6,0,(struct sockaddr *) &addrto, sizeof(addrto));
+        while (TRUE) {
+            t = time(NULL);
+            if(t - time(NULL) >1){
+                t = time(NULL);
+                sendto(sockfd,"Hello",6,0,(struct sockaddr *) &addrto, sizeof(addrto));
+            }
+        }
     }
     if(close (sockfd) == -1)
         printstr(STDOUT,"close failed\n");
