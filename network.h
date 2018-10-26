@@ -12,7 +12,7 @@ struct UDPInfo{
     struct sockaddr_in sockaddr;
 };
 
-void     init_fds(fd_set* rfds,int *maxfd,struct timeval *tv);
+void     init_fds(fd_set* rfds,int *maxfd,struct timeval *tv,UDPInfo** arr,int length);
 UDPInfo* init_listen_UDP(int port);
 UDPInfo* init_send_UDP(int port);
 UDPInfo* init_receiverip_UDP(char* ip,int port);

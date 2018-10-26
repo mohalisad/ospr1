@@ -8,21 +8,22 @@
 void parse_message(string strmsg);
 
 int main(int argc, char *argv[]){
-    int *ports,maxfd,t,t2,sr;
+    int *ports,maxfd,t,t2,sr,pointer;
     string ip,heartbeatmsg,receivedmsg;
     fd_set rfds;
     UDPInfo *broadcast, *listener, client;
+    UDPInfo *arr[10];
     struct timeval tv;
     ports = parse_input(argc,argv);
     printstr(STDOUT,"Please input your ip:\n");
     ip = readstr(STDIN,20);
     heartbeatmsg = msg2str(make_heartbeat_message(ip,PORTN));
     //init server
-    init_fds(&rfds,&maxfd,&tv);
+    pointer = 0;
     broadcast = init_broadcast_udp(ports[0]);
     listener = init_listen_UDP(PORTN);
-    FD_SET(listener->sock, &rfds);
-    maxfd = MAX(maxfd,listener->sock);
+    arr[pointer++] = listener;
+    init_fds(&rfds,&maxfd,&tv,arr,pointer);
     t = time(NULL);
     while ((sr = select(maxfd + 1,&rfds,NULL,NULL,&tv))!=-1){
         if(sr != 0){
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]){
             send_UDP(broadcast,broadcast,heartbeatmsg);
             t = t2;
         }
-        init_fds(&rfds,&maxfd,&tv);
+        init_fds(&rfds,&maxfd,&tv,arr,pointer);
     }
 }
 

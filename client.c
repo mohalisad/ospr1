@@ -6,10 +6,11 @@
 void parse_message(string strmsg);
 
 int main(int argc, char *argv[]){
-    int *ports,maxfd,last_heartbeat,t,sr,portm;
+    int *ports,maxfd,last_heartbeat,t,sr,portm,pointer;
     string ip,heartbeatmsg,receivedmsg,gamemap,username;
     fd_set rfds;
     UDPInfo *broadcast, *listener, *hblistener, client;
+    UDPInfo *arr[10];
     struct timeval tv;
     ports = parse_input(argc,argv);
     printstr(STDOUT,"Please input your ip:\n");
@@ -21,13 +22,12 @@ int main(int argc, char *argv[]){
     printstr(STDOUT,"Please input your gamemap:\n");
     gamemap = readstr(STDIN,20);
     //init client
-    init_fds(&rfds,&maxfd,&tv);
+    pointer = 0;
     listener = init_listen_UDP(portm);
-    FD_SET(listener->sock, &rfds);
-    maxfd = MAX(maxfd,listener->sock);
+    arr[pointer++] = listener;
     hblistener = init_listen_UDP(ports[0]);
-    FD_SET(hblistener->sock, &rfds);
-    maxfd = MAX(maxfd,hblistener->sock);
+    arr[pointer++] = hblistener;
+    init_fds(&rfds,&maxfd,&tv,arr,pointer);
     while ((sr = select(maxfd + 1,&rfds,NULL,NULL,&tv))!=-1){
         if(sr != 0){
             if(FD_ISSET(STDIN, &rfds)){
@@ -40,14 +40,14 @@ int main(int argc, char *argv[]){
             if(FD_ISSET(hblistener->sock, &rfds)){
                 receivedmsg = receive_UDP(hblistener,&client,100);
                 last_heartbeat = time(NULL);
-                printstr(STDOUT,"Hearbeat\s");
+                printstr(STDOUT,"Hearbeat\n");
             }
         }
         t = time(NULL);
         if(t - last_heartbeat>5){//no server
 
         }
-        init_fds(&rfds,&maxfd,&tv);
+        init_fds(&rfds,&maxfd,&tv,arr,pointer);
     }
 }
 

@@ -4,12 +4,17 @@
 #include "network.h"
 #include "util.h"
 
-void init_fds(fd_set *rfds,int *maxfd,struct timeval *tv){
+void init_fds(fd_set *rfds,int *maxfd,struct timeval *tv,UDPInfo** arr,int length){
+    int i;
     FD_ZERO(rfds);
     FD_SET(STDIN, rfds);
     *maxfd = STDIN;
     tv->tv_sec = 1;
     tv->tv_usec = 0;
+    for(i=0;i<length;i++){
+        FD_SET(arr[i]->sock,rfds);
+        *maxfd = MAX(*maxfd,arr[i]->sock);
+    }
 }
 
 UDPInfo *init_listen_UDP(int port){
