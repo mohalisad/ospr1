@@ -4,6 +4,14 @@
 #include "network.h"
 #include "util.h"
 
+void init_fds(fd_set *rfds,int *maxfd,struct timeval *tv){
+    FD_ZERO(rfds);
+    FD_SET(STDIN, rfds);
+    *maxfd = STDIN;
+    tv->tv_sec = 1;
+    tv->tv_usec = 0;
+}
+
 UDPInfo *init_listen_UDP(int port){
     UDPInfo* ret = malloc(sizeof(UDPInfo));
     ret->sock = socket(AF_INET, SOCK_DGRAM, 0);

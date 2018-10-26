@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#define HEARTBEAT = 1
+#define HEARTBEAT 1
 
 typedef int MessageType;
 typedef struct Message Message;

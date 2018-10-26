@@ -4,19 +4,21 @@
 #define FALSE 0
 
 typedef int bool;
+typedef char*  string;
 
 #define STDIN  0
 #define STDOUT 1
 #define STDERR 2
-typedef char*  string;
+
+#define MAX(a,b) a>b?a:b;
 
 void error(string msg);
 
-int  str2int(string inp);
-void int2str(int input,string output);
-void sort_iarray(int* a,int len);
-void swap_in_iarray(int* arr,int i,int j);
-void swap_in_carray(char* arr,int i,int j);
+int    str2int(string inp);
+string int2str(int input);
+void   sort_iarray(int* a,int len);
+void   swap_in_iarray(int* arr,int i,int j);
+void   swap_in_carray(char* arr,int i,int j);
 
 string new_string(string input);
 string new_empty_string(int length);

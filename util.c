@@ -17,24 +17,26 @@ int str2int(char* input){
   return negative?-number:number;
 }
 
-void int2str(int input,char* output){
-  int neg = (input<0);
-  int pointer = 0;
-  int i;
-  input = neg?-input:input;
-  while (1) {
-    output[pointer++] = input%10 + '0';
-    input/=10;
-    if(input == 0){
-      if(neg)
-        output[pointer++] = '-';
-      output[pointer--] = '\0';
-      break;
+string int2str(int input){
+    string output = new_empty_string(100);
+    int neg = (input<0);
+    int pointer = 0;
+    int i;
+    input = neg?-input:input;
+    while (1) {
+        output[pointer++] = input%10 + '0';
+        input/=10;
+        if(input == 0){
+            if(neg)
+                output[pointer++] = '-';
+            output[pointer--] = '\0';
+            break;
+        }
     }
-  }
-  for(i=0;i<(pointer+1)/2;i++){
-    swap_in_carray(output,i,pointer-i);
-  }
+    for(i=0;i<(pointer+1)/2;i++){
+        swap_in_carray(output,i,pointer-i);
+    }
+    return output;
 }
 
 void sort_iarray(int* a,int len){
@@ -131,7 +133,7 @@ int strlen_to_char(string main,char to){
 int intstrlen(int input){
     int len;
     string temp = new_empty_string(100);
-    int2str(input,temp);
+    temp = int2str(input);
     len = strlen_(temp);
     free(temp);
     return len;
@@ -178,8 +180,8 @@ int readint(int fd){
 }
 
 void printint(int fd,int num){
-    string buf = new_empty_string(250);
-    int2str(num,buf);
+    string buf;
+    buf = int2str(num);
     write(fd,buf,strlen_(buf)+1);
     free(buf);
 }
@@ -200,6 +202,7 @@ void printspaces(int fd,int count){
 
 void error(string msg){
     printstr(STDERR,msg);
+    println(STDERR);
     exit(0);
 }
 

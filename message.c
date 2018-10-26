@@ -7,11 +7,12 @@ char *msg2str(Message *input){
     switch (input->type) {
         case HEARTBEAT:
             ret = stradd(ret," ");
-            ret = stradd(ret,ret->ip);
+            ret = stradd(ret,input->ip);
             ret = stradd(ret," ");
-            ret = stradd(ret,int2str(ret->port));
+            ret = stradd(ret,int2str(input->port));
             return ret;
     }
+    return 0;
 }
 
 Message *str2msg(char *input){
@@ -23,6 +24,7 @@ Message *str2msg(char *input){
             ret->port = str2int(get_token(input,' ',2));;
             return ret;
     }
+    return 0;
 }
 
 Message *heartbeat_message(char *ip,int port){
@@ -30,4 +32,5 @@ Message *heartbeat_message(char *ip,int port){
     ret->type = HEARTBEAT;
     ret->ip = new_string(ip);
     ret->port = port;
+    return ret;
 }
