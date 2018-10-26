@@ -5,10 +5,14 @@
 #include "util.h"
 
 #define MPORT 5200
+#define NPORT 5300
 
 int main(){
+    //int s;
+    int count;
     int sockfd;
-    struct sockaddr_in addrport;
+    int addrsize;
+    struct sockaddr_in addrport,addrto;
     if ((sockfd = socket(PF_INET,SOCK_STREAM,0)) == -1){
         printstr(STDOUT,"socket failed\n");
         return 0;
@@ -21,8 +25,16 @@ int main(){
     if(bind(sockfd, (struct sockaddr *) &addrport, sizeof(addrport)) == -1){
         printstr(STDOUT,"bind failed\n");
     }else{
+        /*
         if(listen(sockid, queueLimit) == -1)
             printstr(STDOUT,"listen failed\n");
+        clientaddrsize = sizeof(clientaddr);
+        s = accept(sockfd,&clientaddr,&clientaddrsize);
+        */
+        addrto.sin_family = AF_INET;
+        addrto.sin_port = htons(MPORT);
+        inet_pton(AF_INET, "255.255.255.255", &(addrto.sin_addr));
+        sendto(sockfd,"Hello",6,0,(struct sockaddr *) &addrto, sizeof(addrto));
     }
     if(close (sockfd) == -1)
         printstr(STDOUT,"close failed\n");
