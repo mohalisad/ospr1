@@ -1,44 +1,85 @@
+// #include <sys/types.h>
+// #include <sys/socket.h>
+// #include <time.h>
+// #include "util.h"
+//
+// #define MPORT 5200
+// #define NPORT 5300
+//
+// char tt[1000];
+//
+// int main(){
+//     //int s;
+//     int count;
+//     int sockfd;
+//     int addrsize;
+//     int t;
+//     struct sockaddr_in addrport,addrto;
+//     if ((sockfd = socket(PF_INET,SOCK_DGRAM,0)) == -1){
+//         printstr(STDOUT,"socket failed\n");
+//         return 0;
+//     }
+//     printint(STDOUT,sockfd);
+//     println(STDOUT);
+//     addrport.sin_family = AF_INET;
+//     addrport.sin_port = htons(MPORT);
+//     addrport.sin_addr.s_addr = htonl(INADDR_ANY);
+//     if(bind(sockfd, (struct sockaddr *) &addrport, sizeof(addrport)) == -1){
+//         printstr(STDOUT,"bind failed\n");
+//     }else{
+//         /*
+//         if(listen(sockid, queueLimit) == -1)
+//             printstr(STDOUT,"listen failed\n");
+//         clientaddrsize = sizeof(clientaddr);
+//         s = accept(sockfd,&clientaddr,&clientaddrsize);
+//         */
+//         while (true) {
+//             recvfrom(sockfd,tt,1000,0,(struct sockaddr *) &addrto, sizeof(addrto));
+//             printstr(STDOUT,tt);
+//         }
+//
+//     }
+//     if(close (sockfd) == -1)
+//         printstr(STDOUT,"close failed\n");
+// }
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <time.h>
-#include "util.h"
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <stdio.h>
 
-#define MPORT 5200
-#define NPORT 5300
+void error(char *);
+int main(int argc, char *argv[]){
+   int sock, length, n;
+   struct sockaddr_in server, from; // IP Addressing(ip, port, type) Stuff
+   struct hostent *hp; // DNS stuff
+   char buffer[256];
+   if (argc != 3) {
+       printf("Usage: %s <server_name> <port>\n",argv[0]);
+       exit(1);
+   }
+   sock= socket(AF_INET, SOCK_DGRAM, 0);
+   if (sock < 0) error("socket");
+   server.sin_family = AF_INET;
+   hp = gethostbyname(argv[1]);
+   //if (hp==0) error("Unknown host");
+   //bcopy((char *)hp->h_addr, (char *)&server.sin_addr, hp->h_length);
+   inet_pton(AF_INET, "192.168.1.10", &(server.sin_addr));
+   server.sin_port = htons(atoi(argv[2]));
+   length=sizeof(struct sockaddr_in);
+   printf("Please enter the message: ");
+   bzero(buffer,256);
+   fgets(buffer,255,stdin);
+   n=sendto(sock,buffer,strlen(buffer),0,&server,length);
+   if (n < 0) error("Sendto");
+   n = recvfrom(sock,buffer,256,0,&from, &length);
+   if (n < 0) error("recvfrom");
+   write(1,"Got an ack: ",12);
+   write(1,buffer,n);
+}
 
-char tt[1000];
-
-int main(){
-    //int s;
-    int count;
-    int sockfd;
-    int addrsize;
-    int t;
-    struct sockaddr_in addrport,addrto;
-    if ((sockfd = socket(PF_INET,SOCK_STREAM,0)) == -1){
-        printstr(STDOUT,"socket failed\n");
-        return 0;
-    }
-    printint(STDOUT,sockfd);
-    println(STDOUT);
-    addrport.sin_family = AF_INET;
-    addrport.sin_port = htons(MPORT);
-    addrport.sin_addr.s_addr = htonl(INADDR_ANY);
-    if(bind(sockfd, (struct sockaddr *) &addrport, sizeof(addrport)) == -1){
-        printstr(STDOUT,"bind failed\n");
-    }else{
-        /*
-        if(listen(sockid, queueLimit) == -1)
-            printstr(STDOUT,"listen failed\n");
-        clientaddrsize = sizeof(clientaddr);
-        s = accept(sockfd,&clientaddr,&clientaddrsize);
-        */
-        while (true) {
-            recvfrom(sockfd,tt,1000,0,(struct sockaddr *) &addrto, sizeof(addrto));
-            printstr(STDOUT,tt);
-        }
-
-    }
-    if(close (sockfd) == -1)
-        printstr(STDOUT,"close failed\n");
+void error(char *msg){
+    perror(msg);
+    exit(0);
 }
