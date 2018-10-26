@@ -47,7 +47,8 @@ void parse_message(string strmsg){
     temp = str2msg(strmsg);
     switch (temp->type) {
         case LOGIN:
-
+            printstr(STDOUT,strmsg);
+            println(STDOUT);
             break;
     }
 }
