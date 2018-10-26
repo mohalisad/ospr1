@@ -12,7 +12,7 @@ char *msg2str(Message *input){
             ret = stradd(ret,int2str(input->port));
             return ret;
     }
-    return NULL;
+    return NULL_;
 }
 
 Message *str2msg(char *input){
@@ -24,7 +24,7 @@ Message *str2msg(char *input){
             ret->port = str2int(get_token(input,' ',2));;
             return ret;
     }
-    return NULL;
+    return NULL_;
 }
 
 Message *heartbeat_message(char *ip,int port){

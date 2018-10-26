@@ -11,10 +11,10 @@ int main(int argc, char *argv[]){
     UDPInfo* client;
     //server = init_send_UDP(MPORT);
     client = init_broadcast_udp(MPORT);
-    int t = time(NULL);
+    int t = time(NULL_);
     int t2;
     while (TRUE){
-        t2 = time(NULL);
+        t2 = time(NULL_);
         if(t2 - t >1){
             send_UDP(client,client,"Hello World\n");
             t = t2;
