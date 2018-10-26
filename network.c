@@ -4,7 +4,7 @@
 #include "network.h"
 #include "util.h"
 
-UDPInfo *init_UDP(int port){
+UDPInfo *init_listen_UDP(int port){
     UDPInfo* ret = malloc(sizeof(UDPInfo));
     ret->sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (ret->sock < 0) error("Opening socket");
@@ -14,6 +14,22 @@ UDPInfo *init_UDP(int port){
     ret->sockaddr_size = sizeof(ret->sockaddr);
     if (bind(ret->sock,(struct sockaddr *)&(ret->sockaddr),ret->sockaddr_size)<0)
         error("binding");
+    return ret;
+}
+
+UDPInfo *init_send_UDP(int port){
+    UDPInfo* ret = malloc(sizeof(UDPInfo));
+    ret->sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (ret->sock < 0) error("socket");
+    return ret;
+}
+
+UDPInfo *init_receiverinfo_UDP(char* ip,int port){
+    UDPInfo* ret = malloc(sizeof(UDPInfo));
+    ret->sockaddr.sin_family = AF_INET;
+    inet_pton(AF_INET, ip,(struct sockaddr *) &(ret->sockaddr.sin_addr));
+    ret->sockaddr.sin_port = htons(port);
+    ret->sockaddr_size = sizeof(ret->sockaddr);
     return ret;
 }
 

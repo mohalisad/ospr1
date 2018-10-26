@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
    string line;
    UDPInfo* server;
    UDPInfo client;
-   server = init_UDP(MPORT);
+   server = init_listen_UDP(MPORT);
    while (TRUE){
        buf = receive_UDP(server,&client,1024);
        printstr(STDOUT,buf);

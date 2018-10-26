@@ -11,7 +11,10 @@ struct UDPInfo{
     struct sockaddr_in sockaddr;
 };
 
-UDPInfo *init_UDP(int port);
-int send_UDP(UDPInfo* server,UDPInfo* client,char* message);
+UDPInfo *init_listen_UDP(int port);
+UDPInfo *init_send_UDP(int port);
+UDPInfo *init_receiverinfo_UDP(char* ip,int port);
 char* receive_UDP(UDPInfo* server,UDPInfo* client,int size);
+int send_UDP(UDPInfo* server,UDPInfo* client,char* message);
+
 #endif
