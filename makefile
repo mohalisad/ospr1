@@ -1,6 +1,6 @@
 all: server client
 runs:server
-	./server --server-broadcast-port 1600 --client-broadcast-port 1700
+	./server --server-broadcast-port 5200 --client-broadcast-port 1700
 server:server.o util.o network.o message.o
 	gcc -o server server.o util.o network.o message.o
 server.o:server.c util.h network.h message.h

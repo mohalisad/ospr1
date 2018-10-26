@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "network.h"
 #include "message.h"
 #include "util.h"

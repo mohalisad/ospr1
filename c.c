@@ -1,7 +1,7 @@
 #include "network.h"
 #include "util.h"
 
-#define MPORT 1600
+#define MPORT 5200
 
 int main(int argc, char *argv[]){
     // UDPInfo *myself,*to;
