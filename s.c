@@ -51,12 +51,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
-
-
-void error(char *msg){
-    perror(msg);
-    exit(0);
-}
+#include <stdlib.h>
+#include <unistd.h>
+#include "util.h"
 
 int main(int argc, char *argv[]){
    int sock, length, fromlen, n;

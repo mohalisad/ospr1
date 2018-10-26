@@ -32,4 +32,5 @@ void   printint(int fd,int num);
 void   printstr(int fd,string inp);
 void   println (int fd);
 void   printspaces(int fd,int count);
+void   error(string msg);
 #endif //UTIL_H

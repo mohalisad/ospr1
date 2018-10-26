@@ -195,3 +195,9 @@ void printspaces(int fd,int count){
     for(i=0;i<count;i++)
         write(fd," ",2);
 }
+
+#include <stdio.h>
+void error(string msg){
+    perror(msg);
+    exit(0);
+}
