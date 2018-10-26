@@ -8,7 +8,7 @@ int str2int(char* input){
   int i;
   negative = (input[0]=='-');
   for(i = negative?1:0 ; ; i++){
-    if(input[i]=='\0' || input[i]=='\n' || input[i]=='\r')
+    if(input[i]=='\0')
       break;
     if(input[i]>='0'&&input[i]<='9'){
       number=number*10+input[i]-'0';
@@ -162,8 +162,10 @@ void strcopy(string from,string to){
 
 
 string readstr(int fd,int size){
+    int len;
     string buf = new_empty_string(size);
-    read(fd,buf,size);
+    len = read(fd,buf,size);
+    buf[len-1] = '\0';
     return buf;
 }
 
