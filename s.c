@@ -1,5 +1,5 @@
-#include "util.h"
 #include "network.h"
+#include "util.h"
 
 #define MPORT 5200
 
@@ -9,11 +9,13 @@ int main(int argc, char *argv[]){
    UDPInfo* server;
    UDPInfo client;
    server = init_listen_UDP(MPORT);
+   client = init_broadcast_udp(MPORT)
    while (TRUE){
-       buf = receive_UDP(server,&client,1024);
-       printstr(STDOUT,buf);
-       println(STDOUT);
-       line = stradd("Got it:",buf);
-       send_UDP(server,&client,line);
+       send_UDP(server,&client,"Hello World\n");
+       //buf = receive_UDP(server,&client,1024);
+       //printstr(STDOUT,buf);
+       //println(STDOUT);
+       //line = stradd("Got it:",buf);
+
    }
  }
