@@ -1,5 +1,5 @@
 #include "network.h"
-#include "util.h"
+#include "time.h"
 
 #define MPORT 5200
 
@@ -22,6 +22,7 @@ int main(int argc, char *argv[]){
     while (TRUE){
         buf = receive_UDP(server,&client,1024);
         printstr(STDOUT,buf);
+        println(STDOUT);
         line = stradd("Got it:",buf);
         send_UDP(server,&client,line);
     }

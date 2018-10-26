@@ -207,7 +207,7 @@ void error(string msg){
 }
 
 int* parse_input(int argc,char *argv[]){
-    int* ret = malloc(2*sizeof(int));
+    int* ret = malloc(2 * sizeof(int));
     if (argc != 5)
         error("invalid input");
     if(str_comp(argv[1],"--server-broadcast-port")&&str_comp(argv[3],"--client-broadcast-port")){

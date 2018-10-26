@@ -9,7 +9,6 @@ typedef char*  string;
 #define STDIN  0
 #define STDOUT 1
 #define STDERR 2
-#define NULL_  0
 #define MAX(a,b) a>b?a:b;
 
 void error(string msg);

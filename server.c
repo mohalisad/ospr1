@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <time.h>
 #include "network.h"
 #include "message.h"
 #include "util.h"
@@ -24,15 +24,15 @@ int main(int argc, char *argv[]){
     broadcast = init_broadcast_udp(ports[0]);
     init_fds(&rfds,&maxfd,&tv);
     maxfd = MAX(maxfd,broadcast->sock);
-    t = time(NULL_);
-    while ((selectret = select(maxfd + 1,&rfds,NULL_,NULL_,&tv))!=-1){
+    t = time(NULL);
+    while ((selectret = select(maxfd + 1,&rfds,NULL,NULL,&tv))!=-1){
         if(selectret != 0){
             if(FD_ISSET(STDIN, &rfds)){
                 readstr(STDIN,50);
                 printstr(STDOUT,"stdin\n");
             }
         }else printstr(STDOUT,"Loop\n");
-        t2 = time(NULL_);
+        t2 = time(NULL);
         if(t2 - t >1){
             send_UDP(broadcast,broadcast,heartbeatmsg);
             t = t2;
