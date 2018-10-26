@@ -60,8 +60,7 @@ int main(int argc, char *argv[]){
    server.sin_port = htons(MPORT);
    length = sizeof(struct sockaddr_in);
    line = readstr(STDOUT,256);
-   strcopy(line,buffer);
-   n = sendto(sock,buffer,strlen_(buffer) + 1 ,0,(struct sockaddr *)&server,length);
+   n = sendto(sock,line,strlen_(line) + 1 ,0,(struct sockaddr *)&server,length);
    if (n < 0) error("Sendto");
    n = recvfrom(sock,buffer,256,0,(struct sockaddr *)&from,&length);
    if (n < 0) error("recvfrom");

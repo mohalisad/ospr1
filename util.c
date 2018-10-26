@@ -156,7 +156,7 @@ void strcopy(string from,string to){
     int i;
     for(i=0;;i++){
         to[i] = from[i];
-        if(to[i])break;
+        if(to[i] == '\0')break;
     }
 }
 

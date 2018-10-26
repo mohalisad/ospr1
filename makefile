@@ -10,4 +10,4 @@ c.o:c.c util.h
 util.o:util.c util.h
 	gcc -c util.c
 clean:
-	rm -rf *.out *.o
+	rm -rf *.out *.o server client

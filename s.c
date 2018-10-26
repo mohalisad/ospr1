@@ -6,7 +6,7 @@
 // #include <time.h>
 // #include "util.h"
 //
-// #define MPORT 5200
+#define MPORT 5200
 // #define NPORT 5300
 //
 // int main(){
@@ -48,10 +48,7 @@
 // }
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include "util.h"
 
@@ -60,27 +57,22 @@ int main(int argc, char *argv[]){
    struct sockaddr_in server;
    struct sockaddr_in from;
    char buf[1024];
-   if (argc < 2) {
-      fprintf(stderr, "ERROR, no port provided\n");
-      exit(0);
-   }
+   string line;
    sock=socket(AF_INET, SOCK_DGRAM, 0);
    if (sock < 0) error("Opening socket");
    length = sizeof(server);
-   bzero(&server,length);
    server.sin_family=AF_INET;
    server.sin_addr.s_addr=INADDR_ANY;
-   server.sin_port=htons(atoi(argv[1]));
+   server.sin_port=htons(MPORT);
    if (bind(sock,(struct sockaddr *)&server,length)<0)
        error("binding");
    fromlen = sizeof(struct sockaddr_in);
-   while (1) {
+   while (TRUE) {
        n = recvfrom(sock,buf,1024,0,(struct sockaddr *)&from,&fromlen);
        if (n < 0) error("recvfrom");
-       write(1,"Received a datagram: ",21);
-       write(1,buf,n);
-       n = sendto(sock,"Got your message\n",17,
-                  0,(struct sockaddr *)&from,fromlen);
+       printstr(STDOUT,buf);
+       line = stradd("Got it:",buf);
+       n = sendto(sock,line,strlen_(line) + 1,0,(struct sockaddr *)&from,fromlen);
        if (n  < 0) error("sendto");
    }
  }
