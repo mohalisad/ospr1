@@ -10,6 +10,8 @@ typedef int bool;
 #define STDERR 2
 typedef char*  string;
 
+void error(string msg);
+
 int  str2int(string inp);
 void int2str(int input,string output);
 void sort_iarray(int* a,int len);
@@ -32,5 +34,6 @@ void   printint(int fd,int num);
 void   printstr(int fd,string inp);
 void   println (int fd);
 void   printspaces(int fd,int count);
-void   error(string msg);
+
+int* parse_input(int argc,char *argv[]);
 #endif //UTIL_H

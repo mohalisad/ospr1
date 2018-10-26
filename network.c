@@ -43,8 +43,6 @@ UDPInfo *init_broadcast_udp(int port){
     ret->sockaddr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
     ret->sockaddr.sin_port = htons(port);
     ret->sockaddr_size = sizeof(ret->sockaddr);
-    if (bind(ret->sock,(struct sockaddr *)&(ret->sockaddr),ret->sockaddr_size)<0)
-        error("binding");
     return ret;
 }
 

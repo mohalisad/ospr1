@@ -198,8 +198,21 @@ void printspaces(int fd,int count){
         write(fd," ",2);
 }
 
-#include <stdio.h>
 void error(string msg){
-    perror(msg);
+    printstr(STDERR,msg);
     exit(0);
+}
+
+int* parse_input(int argc,char *argv[]){
+    int* ret = malloc(2*sizeof(int));
+    if (argc != 5)
+        error("invalid input");
+    if(str_comp(argv[1],"--server-broadcast-port")&&str_comp(argv[3],"--client-broadcast-port")){
+        ret[0] = str2int(argv[2]);
+        ret[1] = str2int(argv[4]);
+    }else if(str_comp(argv[1],"--server-broadcast-port")&&str_comp(argv[3],"--client-broadcast-port")){
+        ret[1] = str2int(argv[2]);
+        ret[0] = str2int(argv[4]);
+    }else error("invalid input");
+    return ret;
 }
