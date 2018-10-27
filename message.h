@@ -5,6 +5,7 @@
 #define LOGIN     1
 #define MAKEGAME  2
 #define MAKEGAMEW 3
+#define BEGINGAME 4
 
 typedef int MessageType;
 typedef struct Message Message;
@@ -14,7 +15,7 @@ struct Message{
     char* ip;
     char* username;
     char* opponent;
-    int port;
+    int   port;
 };
 
 char    *msg2str(Message *input);
@@ -24,4 +25,5 @@ Message *make_heartbeat_message(char *ip,int port);
 Message *make_login_message(char *ip,int port,char* username);
 Message *make_game_message(char* username);
 Message *make_game_message_with(char* username,char* opponent);
+Message *make_begin_message(char* ip,int port);
 #endif

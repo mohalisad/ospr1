@@ -66,21 +66,21 @@ void parse_stdin(UDPInfo* server,UDPInfo* myself,string username){
     line = readstr(STDIN,50);
     part1 = get_token(line,' ',0);
     if(str_comp(part1,"make_game")){
-        if(number_of_tokens(line,' ') > 2){
-            printstr(STDERR,"input is invalid");
-        }else{
+        if(number_of_tokens(line,' ') < 3){
             if(number_of_tokens(line,' ') == 1){
                 send_UDP(myself,server,msg2str(make_game_message(username)));
             }else{
                 send_UDP(myself,server,msg2str(make_game_message_with(username,get_token(line,' ',1))));
             }
-        }
-    }
+        }else printstr(STDERR,"input is invalid\n");
+    }else printstr(STDERR,"input is invalid\n");
 }
 
 void parse_message(UDPInfo** server,UDPInfo** myself,string strmsg,string ip,int port,string username){
     Message *temp;
     temp = str2msg(strmsg);
+    printstr(STDOUT,strmsg);
+    println(STDOUT);
     switch (temp->type) {
         case HEARTBEAT:
             *myself = init_send_UDP(temp->port);

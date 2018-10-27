@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
 
 void parse_message(string strmsg,User *start){
     Message *temp;
-    User *found;
+    User *found,*found2;
     temp = str2msg(strmsg);
     printstr(STDOUT,strmsg);
     println(STDOUT);
@@ -56,15 +56,29 @@ void parse_message(string strmsg,User *start){
             break;
         case MAKEGAME:
             found = get_user_by_name(start,temp->username);
-            if(found)
-                found->ready_to_play = TRUE;
+            if(found){
+                found2 = find_pending(start,temp->username);
+                if(found2){
+                    make_game(start,found,found2);
+                }else {
+                    found2 = find_ready_to_play(start);
+                    if(found2){
+                        make_game(start,found,found2);
+                    }else found->ready_to_play = TRUE;
+                }
+            }
             break;
         case MAKEGAMEW:
-            found = get_user_by_name(start,temp->username);
+            found  = get_user_by_name(start,temp->username);
+            found2 = get_user_by_name(start,temp->opponent);
             if(found){
-                found->ready_to_play = TRUE;
-                found->pending = TRUE;
-                found->pend_who = temp->opponent;
+                if(found2?(found2->ready_to_play):FALSE){
+                    make_game(start,found,found2);
+                }else{
+                    found->ready_to_play = TRUE;
+                    found->pending = TRUE;
+                    found->pend_who = temp->opponent;
+                }
             }
             break;
     }

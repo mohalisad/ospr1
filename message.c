@@ -7,6 +7,7 @@ char *msg2str(Message *input){
     ret = int2str(input->type);
     ret = stradd(ret," ");
     switch (input->type) {
+        case BEGINGAME:
         case HEARTBEAT:
             ret = stradd(ret,input->ip);
             ret = stradd(ret," ");
@@ -33,15 +34,16 @@ char *msg2str(Message *input){
 
 Message *str2msg(char *input){
     Message *ret = malloc(sizeof(Message));
-    ret->type = str2int(get_token(input,' ',0));
+    ret->type    = str2int(get_token(input,' ',0));
     switch (ret->type) {
+        case BEGINGAME:
         case HEARTBEAT:
-            ret->ip = get_token(input,' ',1);
+            ret->ip   = get_token(input,' ',1);
             ret->port = str2int(get_token(input,' ',2));;
             return ret;
         case LOGIN:
-            ret->ip = get_token(input,' ',1);
-            ret->port = str2int(get_token(input,' ',2));;
+            ret->ip       = get_token(input,' ',1);
+            ret->port     = str2int(get_token(input,' ',2));;
             ret->username = get_token(input,' ',3);;
             return ret;
         case MAKEGAME:
@@ -57,32 +59,39 @@ Message *str2msg(char *input){
 
 Message *make_heartbeat_message(char *ip,int port){
     Message *ret = malloc(sizeof(Message));
-    ret->type = HEARTBEAT;
-    ret->ip = new_string(ip);
-    ret->port = port;
+    ret->type    = HEARTBEAT;
+    ret->ip      = new_string(ip);
+    ret->port    = port;
     return ret;
 }
 
 Message *make_login_message(char *ip,int port,char* username){
-    Message *ret = malloc(sizeof(Message));
-    ret->type = LOGIN;
-    ret->ip = new_string(ip);
-    ret->port = port;
+    Message *ret  = malloc(sizeof(Message));
+    ret->type     = LOGIN;
+    ret->ip       = new_string(ip);
+    ret->port     = port;
     ret->username = new_string(username);
     return ret;
 }
 
 Message *make_game_message(char* username){
-    Message *ret = malloc(sizeof(Message));
-    ret->type = MAKEGAME;
+    Message *ret  = malloc(sizeof(Message));
+    ret->type     = MAKEGAME;
     ret->username = new_string(username);
     return ret;
 }
 
 Message *make_game_message_with(char* username,char* opponent){
-    Message *ret = malloc(sizeof(Message));
-    ret->type = MAKEGAMEW;
+    Message *ret  = malloc(sizeof(Message));
+    ret->type     = MAKEGAMEW;
     ret->username = new_string(username);
     ret->opponent = new_string(opponent);
+    return ret;
+}
+Message *make_begin_message(char* ip,int port){
+    Message *ret = malloc(sizeof(Message));
+    ret->type = BEGINGAME;
+    ret->ip   = new_string(ip);
+    ret->port = port;
     return ret;
 }

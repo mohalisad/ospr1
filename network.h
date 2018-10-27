@@ -8,7 +8,7 @@ typedef struct UDPInfo UDPInfo;
 
 struct UDPInfo{
     int sock;
-    int sockaddr_size;
+    socklen_t sockaddr_size;
     struct sockaddr_in sockaddr;
 };
 
