@@ -6,6 +6,8 @@ User* make_empty_user(){
     User* ret;
     ret = malloc(sizeof(User));
     ret->next = NULL;
+    ret->ready_to_play = 0;
+    ret->pending = 0;
     return ret;
 }
 

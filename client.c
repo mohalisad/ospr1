@@ -3,13 +3,14 @@
 #include "message.h"
 #include "util.h"
 
-void parse_message(string strmsg,string ip,int port,string username);
+void parse_stdin(UDPInfo* server,UDPInfo* myself,string username);
+void parse_message(UDPInfo** server,UDPInfo** myself,string strmsg,string ip,int port,string username);
 
 int main(int argc, char *argv[]){
     int *ports,maxfd,last_heartbeat,t,sr,portm,pointer;
     string ip,heartbeatmsg,receivedmsg,gamemap,username;
     fd_set rfds;
-    UDPInfo *broadcast, *listener, *hblistener, client;
+    UDPInfo *server,*myself,*listener, *hblistener, client;
     UDPInfo *arr[10];
     struct timeval tv;
     bool server_alive;
@@ -34,24 +35,25 @@ int main(int argc, char *argv[]){
     while ((sr = select(maxfd + 1,&rfds,NULL,NULL,&tv))!=-1){
         if(sr != 0){
             if(FD_ISSET(STDIN, &rfds)){
-
+                if(server_alive)
+                    parse_stdin(server,myself,username);
             }
             if(FD_ISSET(listener->sock, &rfds)){
                 receivedmsg = receive_UDP(listener,&client,100);
-                parse_message(receivedmsg,ip,portm,username);
+                parse_message(&server,&myself,receivedmsg,ip,portm,username);
             }
             if(FD_ISSET(hblistener->sock, &rfds)){
                 receivedmsg = receive_UDP(hblistener,&client,100);
                 last_heartbeat = time(NULL);
                 if(!server_alive){
-                    parse_message(receivedmsg,ip,portm,username);
+                    parse_message(&server,&myself,receivedmsg,ip,portm,username);
                 }
                 server_alive = TRUE;
             }
         }
         t = time(NULL);
         if(t - last_heartbeat>5){//no server
-            if(!server_alive){
+            if(!server_alive){//fully client mode
 
             }
         }
@@ -59,15 +61,31 @@ int main(int argc, char *argv[]){
     }
 }
 
-void parse_message(string strmsg,string ip,int port,string username){
+void parse_stdin(UDPInfo* server,UDPInfo* myself,string username){
+    string line,part1;
+    line = readstr(STDIN,50);
+    part1 = get_token(line,' ',0);
+    if(str_comp(part1,"make_game")){
+        if(number_of_tokens(line,' ') > 2){
+            printstr(STDERR,"input is invalid");
+        }else{
+            if(number_of_tokens(line,' ') == 1){
+                send_UDP(myself,server,msg2str(make_game_message(username)));
+            }else{
+                send_UDP(myself,server,msg2str(make_game_message_with(username,get_token(line,' ',1))));
+            }
+        }
+    }
+}
+
+void parse_message(UDPInfo** server,UDPInfo** myself,string strmsg,string ip,int port,string username){
     Message *temp;
-    UDPInfo *server,*myself;
     temp = str2msg(strmsg);
     switch (temp->type) {
         case HEARTBEAT:
-            myself = init_send_UDP(temp->port);
-            server = init_receiverip_UDP(temp->ip,temp->port);
-            send_UDP(myself,server,msg2str(make_login_message(ip,port,username)));
+            *myself = init_send_UDP(temp->port);
+            *server = init_receiverip_UDP(temp->ip,temp->port);
+            send_UDP(*myself,*server,msg2str(make_login_message(ip,port,username)));
             break;
         case LOGIN:
 

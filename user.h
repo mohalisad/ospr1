@@ -8,6 +8,9 @@ struct User{
     char* username;
     int   port;
     User* next;
+    int   ready_to_play;
+    int   pending;
+    char* pend_who;
 };
 
 User* make_empty_user();

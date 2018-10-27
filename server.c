@@ -31,7 +31,6 @@ int main(int argc, char *argv[]){
     t = time(NULL);
     while ((sr = select(maxfd + 1,&rfds,NULL,NULL,&tv))!=-1){
         if(sr != 0){
-            if(FD_ISSET(STDIN, &rfds));//nothing
             if(FD_ISSET(listener->sock, &rfds)){
                 receivedmsg = receive_UDP(listener,&client,100);
                 parse_message(receivedmsg,start_user);
@@ -48,12 +47,24 @@ int main(int argc, char *argv[]){
 
 void parse_message(string strmsg,User *start){
     Message *temp;
+    User *found;
     temp = str2msg(strmsg);
     printstr(STDOUT,strmsg);
     println(STDOUT);
     switch (temp->type) {
         case LOGIN:
             add_to_end(start,make_user(temp->ip,temp->port,temp->username));
+            break;
+        case MAKEGAME:
+            printstr(STDOUT,"MG\n");
+            found = get_user_by_name(start,temp->username);
+            found->ready_to_play = TRUE;
+        case MAKEGAMEW:
+            printstr(STDOUT,"MGW\n");
+            found = get_user_by_name(start,temp->username);
+            found->ready_to_play = TRUE;
+            found->pending = TRUE;
+            found->pend_who = temp->opponent;
             break;
     }
 }
