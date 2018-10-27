@@ -1,11 +1,12 @@
 #include <time.h>
 #include "network.h"
 #include "message.h"
+#include "user.h"
 #include "util.h"
 
 #define PORTN 5412
 
-void parse_message(string strmsg);
+void parse_message(string strmsg,User *users);
 
 int main(int argc, char *argv[]){
     int *ports,maxfd,t,t2,sr,pointer;
@@ -13,8 +14,11 @@ int main(int argc, char *argv[]){
     fd_set rfds;
     UDPInfo *broadcast, *listener, client;
     UDPInfo *arr[10];
+    User *start_user;//dummy
     struct timeval tv;
     ports = parse_input(argc,argv);
+    start_user = make_empty_user();
+    start_user->next = make_empty_user();
     printstr(STDOUT,"Please input your ip:\n");
     ip = readstr(STDIN,20);
     heartbeatmsg = msg2str(make_heartbeat_message(ip,PORTN));
@@ -30,7 +34,7 @@ int main(int argc, char *argv[]){
             if(FD_ISSET(STDIN, &rfds));//nothing
             if(FD_ISSET(listener->sock, &rfds)){
                 receivedmsg = receive_UDP(listener,&client,100);
-                parse_message(receivedmsg);
+                parse_message(receivedmsg,start_user);
             }
         }
         t2 = time(NULL);
@@ -42,13 +46,14 @@ int main(int argc, char *argv[]){
     }
 }
 
-void parse_message(string strmsg){
+void parse_message(string strmsg,User *start){
     Message *temp;
     temp = str2msg(strmsg);
+    printstr(STDOUT,strmsg);
+    println(STDOUT);
     switch (temp->type) {
         case LOGIN:
-            printstr(STDOUT,strmsg);
-            println(STDOUT);
+            add_to_end(start,make_user(temp->ip,temp->port,temp->username));
             break;
     }
 }
