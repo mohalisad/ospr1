@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <time.h>
 #include "network.h"
 #include "message.h"
@@ -47,6 +48,8 @@ int main(int argc, char *argv[]){
                 last_heartbeat = time(NULL);
                 if(!server_alive){
                     parse_message(&server,&myself,receivedmsg,ip,portm,username);
+                    pointer--;//remove hb listener
+                    close(arr[pointer]->sock);
                 }
                 server_alive = TRUE;
             }
