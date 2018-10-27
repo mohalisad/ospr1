@@ -77,12 +77,17 @@ int main(int argc, char *argv[]){
 
 void parse_stdin(UDPInfo* server,UDPInfo* myself,UDPInfo* opponent,UDPInfo* gameself,string username,GameStat* game,bool game_mode){
     string line,part1;
+    int x,y;
     line = readstr(STDIN,50);
     part1 = get_token(line,' ',0);
     if(game_mode){
         if(game->myturn){
             if(number_of_tokens(line,' ')==2){
-                send_UDP(gameself,opponent,msg2str(make_attack_message(str2int(get_token(line,' ',1)),str2int(get_token(line,' ',0)))));
+                x = str2int(get_token(line,' ',1));
+                y = str2int(get_token(line,' ',0));
+                if(!check_enemyhit(game,x,y))
+                    send_UDP(gameself,opponent,msg2str(make_attack_message(x,y)));
+                else printstr(STDERR,"You have attacked that\n");
             }else printstr(STDERR,"Invalid input\n");
         }else printstr(STDERR,"It's not your turn\n");
     }else if(str_comp(part1,"make_game")){
@@ -121,6 +126,7 @@ int parse_message(UDPInfo** server,UDPInfo** myself,UDPInfo** opponent,UDPInfo**
         case ATTACK:
             hit = hit_myboard(game,temp->x,temp->y);
             send_UDP(*gameself,*opponent,msg2str(make_hit_message(temp->x,temp->y,hit)));
+            print_game(STDOUT,game);
             if(game->enemyhit == game->total){
                 printstr(STDOUT,"You lost.\n");
                 exit(0);
@@ -128,6 +134,7 @@ int parse_message(UDPInfo** server,UDPInfo** myself,UDPInfo** opponent,UDPInfo**
             break;
         case HITRESULT:
             hit_enemyboard(game,temp->x,temp->y,temp->hit);
+            print_game(STDOUT,game);
             if(game->myhit == game->total){
                 printstr(STDOUT,"You win.\n");
                 exit(0);
