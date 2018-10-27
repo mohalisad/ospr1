@@ -2,6 +2,12 @@
 #include <unistd.h>
 #include "util.h"
 
+void error(string msg){
+    printstr(STDERR,msg);
+    println(STDERR);
+    exit(0);
+}
+
 int str2int(char* input){
   int negative = 0;
   int number = 0;
@@ -198,12 +204,6 @@ void printspaces(int fd,int count){
     int i;
     for(i=0;i<count;i++)
         write(fd," ",2);
-}
-
-void error(string msg){
-    printstr(STDERR,msg);
-    println(STDERR);
-    exit(0);
 }
 
 int* parse_input(int argc,char *argv[]){

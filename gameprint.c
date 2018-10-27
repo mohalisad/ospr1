@@ -67,10 +67,12 @@ void print_footer(int fd,int myhit,int enemyhit,int total){
     printstr(fd,"remaining:");
     printint(fd,total - myhit);
     println(fd);
+    printstr(fd,"remaining:");
 }
 
 void print_game(int fd,GameStat *game){
     print_header(fd);
     print_board(fd,game->myboard,game->enemyboard);
     print_footer(fd,game->myhit,game->enemyhit,game->total);
+    printstr(fd,game->myturn?"It's your turn\n":"It's your opponent turn\n");
 }

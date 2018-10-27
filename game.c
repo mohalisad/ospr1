@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "util.h"
 #include "game.h"
-#include "gameprint.h"
 
 int **read_board(int file,int *counter){
     string line,lines,part;
@@ -38,27 +38,32 @@ int **empty_board(void){
     return ret;
 }
 
-GameStat *new_game(int file){
+GameStat *new_game(char* file){
     GameStat *game;
+    int fd;
+    if((fd = open(file,O_RDONLY))<0)
+        error("open gamemap failed");
     game = malloc(sizeof(GameStat));
-    game->myboard = read_board(file,&(game->total));
+    game->myboard = read_board(fd,&(game->total));
     game->enemyboard = empty_board();
     game->myhit = 0;
     game->enemyhit = 0;
+    close(fd);
     return game;
 }
 
-bool check_enemyhit(GameStat *game,int x,int y){
-    return game->enemyboard[x][y]!=0;
+int check_enemyhit(GameStat *game,int x,int y){
+    return game->enemyboard[x][y] != 0;
 }
 
-bool hit_myboard(GameStat *game,int x,int y){
+int hit_myboard(GameStat *game,int x,int y){
     if(game->myboard[x][y]!=HIT && game->myboard[x][y]!=MISS){
         if(game->myboard[x][y]==FULL){
             game->myboard[x][y] = HIT;
             game->enemyhit++;
             return TRUE;
         }else{
+            game->myturn = TRUE;
             game->myboard[x][y] = MISS;
         }
     }
@@ -67,22 +72,9 @@ bool hit_myboard(GameStat *game,int x,int y){
 
 void hit_enemyboard(GameStat *game,int x,int y,bool success){
     game->enemyboard[x][y] = success?HIT:MISS;
-    if(success)
+    if(success){
         game->myhit++;
+    }else{
+        game->myturn = FALSE;
+    }
 }
-
-/*
-int main(void){
-    int file;
-    GameStat *game;
-    file = open("data",O_RDONLY);
-    game = new_game(file);
-    hit_myboard(game,1,5);
-    hit_myboard(game,1,5);
-    hit_myboard(game,0,5);
-    hit_myboard(game,1,4);
-    hit_enemyboard(game,7,7,1);
-    hit_enemyboard(game,6,6,0);
-    print_game(STDOUT,game);
-}
-*/
