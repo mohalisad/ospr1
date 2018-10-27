@@ -7,6 +7,7 @@ char *msg2str(Message *input){
     ret = int2str(input->type);
     ret = stradd(ret," ");
     switch (input->type) {
+        case CHEARTBEAT:
         case INTRO:
         case BEGINGAME:
         case HEARTBEAT:
@@ -49,6 +50,7 @@ Message *str2msg(char *input){
     Message *ret = malloc(sizeof(Message));
     ret->type    = str2int(get_token(input,' ',0));
     switch (ret->type) {
+        case CHEARTBEAT:
         case INTRO:
         case BEGINGAME:
         case HEARTBEAT:
@@ -87,7 +89,13 @@ Message *make_heartbeat_message(char *ip,int port){
     ret->port    = port;
     return ret;
 }
-
+Message *make_cheartbeat_message(char *ip,int port){
+    Message *ret = malloc(sizeof(Message));
+    ret->type    = CHEARTBEAT;
+    ret->ip      = new_string(ip);
+    ret->port    = port;
+    return ret;
+}
 Message *make_login_message(char *ip,int port,char* username){
     Message *ret  = malloc(sizeof(Message));
     ret->type     = LOGIN;

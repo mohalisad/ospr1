@@ -7,18 +7,18 @@
 #include "gameprint.h"
 #include "util.h"
 
-void parse_stdin(UDPInfo* server,UDPInfo* myself,UDPInfo* opponent,UDPInfo* gameself,string username,GameStat* game,bool game_mode);
+void parse_stdin(UDPInfo* server,UDPInfo* myself,UDPInfo* opponent,UDPInfo* gameself,string username,GameStat* game,bool heard_hb,bool game_mode);
 bool parse_message(UDPInfo** server,UDPInfo** myself,UDPInfo** opponent,UDPInfo** gameself,GameStat* game,string strmsg,string ip,int port,string username);
 
 int main(int argc, char *argv[]){
     int *ports,maxfd,last_heartbeat,t,sr,portm,pointer,pmstate;
     string ip,heartbeatmsg,receivedmsg,gamemap,username;
     fd_set rfds;
-    UDPInfo *server,*myself,*listener, *hblistener, client,*gameself,*opponent;
+    UDPInfo *server,*myself,*listener, *hblistener, client,*gameself,*opponent,*broadcast;
     UDPInfo *arr[10];
     GameStat *game;
     struct timeval tv;
-    bool server_alive,game_mode;
+    bool heard_hb,game_mode,client_mode,alone_client;
     ports = parse_input(argc,argv);
     printstr(STDOUT,"Please input your ip:\n");
     ip = readstr(STDIN,20);
@@ -37,14 +37,14 @@ int main(int argc, char *argv[]){
     arr[pointer++] = hblistener;
     init_fds(&rfds,&maxfd,&tv,arr,pointer);
     last_heartbeat = time(NULL);
-    server_alive = FALSE;
+    heard_hb = FALSE;
     game_mode = FALSE;
+    client_mode = FALSE;
+    alone_client = FALSE;
     while ((sr = select(maxfd + 1,&rfds,NULL,NULL,&tv))!=-1){
         if(sr != 0){
             if(FD_ISSET(STDIN, &rfds)){
-                if(server_alive||game_mode){
-                    parse_stdin(server,myself,opponent,gameself,username,game,game_mode);
-                }
+                parse_stdin(server,myself,opponent,gameself,username,game,heard_hb,game_mode);
             }
             if(FD_ISSET(listener->sock, &rfds)){
                 receivedmsg = receive_UDP(listener,&client,100);
@@ -57,25 +57,50 @@ int main(int argc, char *argv[]){
             if(FD_ISSET(hblistener->sock, &rfds)){
                 receivedmsg = receive_UDP(hblistener,&client,100);
                 last_heartbeat = time(NULL);
-                if(!server_alive){
-                    parse_message(&server,&myself,&opponent,&gameself,game,receivedmsg,ip,portm,username);
-                    pointer--;//remove hb listener
-                    close(arr[pointer]->sock);
+                if((pmstate = parse_message(&server,&myself,&opponent,&gameself,game,receivedmsg,ip,portm,username)) > 0){
+                    game_mode = TRUE;
+                    game->myturn = (pmstate==1);
+                    print_game(STDOUT,game);
                 }
-                server_alive = TRUE;
+                pointer--;//remove hb listener
+                close(arr[pointer]->sock);
+                heard_hb = TRUE;
             }
         }
         t = time(NULL);
-        if(t - last_heartbeat>5){//no server
-            if(!server_alive){//fully client mode
-
+        if(alone_client){
+            if(game_mode){
+                close(broadcast->sock);
+            }else if(t - last_heartbeat > 1){
+                printstr(STDOUT,"HB\n");
+                send_UDP(broadcast,broadcast,heartbeatmsg);
+                last_heartbeat = t;
+            }
+        }else if(t - last_heartbeat > 3){//no server
+            if(!heard_hb){
+                if(client_mode){
+                    printstr(STDOUT,"NO CLIENT\n");
+                    alone_client = TRUE;
+                    close(arr[pointer-1]->sock);//close client heartbeat listener
+                    pointer--;
+                    broadcast = init_broadcast_udp(ports[1]);
+                    heartbeatmsg = msg2str(make_cheartbeat_message(ip,portm));
+                }else{//there is no server
+                    printstr(STDOUT,"NO SERVER\n");
+                    client_mode = TRUE;
+                    last_heartbeat = t;
+                    close(arr[pointer-1]->sock);//close server heartbeat listener
+                    arr[pointer-1] = init_listen_UDP(ports[1]);//init client heartbeat listener
+                    hblistener = arr[pointer-1];
+                }
             }
         }
+
         init_fds(&rfds,&maxfd,&tv,arr,pointer);
     }
 }
 
-void parse_stdin(UDPInfo* server,UDPInfo* myself,UDPInfo* opponent,UDPInfo* gameself,string username,GameStat* game,bool game_mode){
+void parse_stdin(UDPInfo* server,UDPInfo* myself,UDPInfo* opponent,UDPInfo* gameself,string username,GameStat* game,bool heard_hb,bool game_mode){
     string line,part1;
     int x,y;
     line = readstr(STDIN,50);
@@ -114,6 +139,7 @@ int parse_message(UDPInfo** server,UDPInfo** myself,UDPInfo** opponent,UDPInfo**
             *server = init_receiverip_UDP(temp->ip,temp->port);
             send_UDP(*myself,*server,msg2str(make_login_message(ip,port,username)));
             break;
+        case CHEARTBEAT:
         case BEGINGAME:
             *gameself = init_send_UDP(temp->port);
             *opponent = init_receiverip_UDP(temp->ip,temp->port);

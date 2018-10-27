@@ -37,6 +37,7 @@ int main(int argc, char *argv[]){
         }
         t2 = time(NULL);
         if(t2 - t >1){
+            printstr(STDOUT,"HB\n");
             send_UDP(broadcast,broadcast,heartbeatmsg);
             t = t2;
         }
