@@ -18,7 +18,6 @@ int main(int argc, char *argv[]){
     struct timeval tv;
     ports = parse_input(argc,argv);
     start_user = make_empty_user();
-    start_user->next = make_empty_user();
     printstr(STDOUT,"Please input your ip:\n");
     ip = readstr(STDIN,20);
     heartbeatmsg = msg2str(make_heartbeat_message(ip,PORTN));
@@ -56,15 +55,17 @@ void parse_message(string strmsg,User *start){
             add_to_end(start,make_user(temp->ip,temp->port,temp->username));
             break;
         case MAKEGAME:
-            printstr(STDOUT,"MG\n");
             found = get_user_by_name(start,temp->username);
-            found->ready_to_play = TRUE;
+            if(found)
+                found->ready_to_play = TRUE;
+            break;
         case MAKEGAMEW:
-            printstr(STDOUT,"MGW\n");
             found = get_user_by_name(start,temp->username);
-            found->ready_to_play = TRUE;
-            found->pending = TRUE;
-            found->pend_who = temp->opponent;
+            if(found){
+                found->ready_to_play = TRUE;
+                found->pending = TRUE;
+                found->pend_who = temp->opponent;
+            }
             break;
     }
 }
